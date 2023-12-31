@@ -7,6 +7,8 @@ import (
 	"runtime/debug"
 	"sync"
 	"time"
+
+	"github.com/fatih/color"
 )
 
 type Level int8
@@ -90,7 +92,18 @@ func (l *Logger) print(level Level, message string, properties map[string]string
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
-	return l.out.Write(append(line, '\n'))
+	var messageColor color.Attribute
+
+	switch level {
+	case LevelInfo:
+		messageColor = color.FgBlue
+	case LevelError:
+		messageColor = color.FgRed
+	case LevelFatal:
+		messageColor = color.BgRed
+	}
+
+	return color.New(messageColor).Fprintln(l.out, string(line))
 }
 
 func (l *Logger) Write(message []byte) (n int, err error) {
