@@ -34,7 +34,7 @@ func (app *application) rateLimit(next http.Handler) http.Handler {
 		clients = make(map[string]*client)
 	)
 
-	// cleenup
+	// cleanup
 	go func() {
 		for {
 			time.Sleep(time.Minute)
