@@ -96,7 +96,7 @@ func (l *Logger) print(level Level, message string, properties map[string]string
 
 	switch level {
 	case LevelInfo:
-		messageColor = color.FgBlue
+		messageColor = color.BgGreen
 	case LevelError:
 		messageColor = color.FgRed
 	case LevelFatal:
