@@ -171,9 +171,26 @@ func (app *application) requirePermission(code string, next http.HandlerFunc) ht
 	return app.requireActivatedUser(fn)
 }
 
+//  If your code makes a decision about what to return based on the content of a request header,
+//  you should include that header name in your Vary response header — even if the request
+//  didn’t include that header.
+
+// Also echo back the 'Origin' as 'Access-Control-Allow-Origin' if found in the trusted origins
 func (app *application) enableCORS(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Add("Vary", "Origin")
+
+		origin := r.Header.Get("origin")
+
+		if origin != "" {
+			for i := range app.config.cors.trustedOrigins {
+				if origin == app.config.cors.trustedOrigins[i] {
+					w.Header().Add("Access-Control-Allow-Origin", origin)
+					break
+				}
+			}
+		}
+
 		next.ServeHTTP(w, r)
 	})
 }
